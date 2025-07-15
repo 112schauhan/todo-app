@@ -47,4 +47,9 @@ export class TodoController {
   findOne(@Param('id') id: string, @Request() req: any) {
     return this.todoService.findOne(id, req.user.userId);
   }
+
+  @Get('statistics')
+  fetchStatistics(@Request() req: any) {
+    return this.todoService.fetchStatistics(req.user.userId);
+  }
 }

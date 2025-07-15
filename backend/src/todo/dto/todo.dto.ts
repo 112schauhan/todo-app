@@ -1,5 +1,14 @@
-import { IsDateString, IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
+import {
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  Max,
+  Min,
+} from 'class-validator';
 import { TodoStatus } from 'src/schemas/todo.schema';
+import { Type } from 'class-transformer';
 
 export class CreateTodoDto {
   @IsNotEmpty()
@@ -52,4 +61,20 @@ export class FilterTodoDto {
 
   @IsOptional()
   sortOrder?: 'asc' | 'desc';
+
+  @IsOptional()
+  search?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  page?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  @Max(50)
+  limit?: number;
 }

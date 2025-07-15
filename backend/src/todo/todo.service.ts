@@ -33,7 +33,16 @@ export class TodoService {
     return todo;
   }
 
-  async findAll(userId: string, filterDto: FilterTodoDto): Promise<Todo[]> {
+  async findAll(
+    userId: string,
+    filterDto: FilterTodoDto
+  ): Promise<{
+    todos: Todo[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
     const filter: any = { userId };
 
     if (filterDto.status) {
@@ -50,13 +59,32 @@ export class TodoService {
       }
     }
 
+    if (filterDto.search) {
+      filter.$or = [
+        { title: { $regex: filterDto.search, $options: 'i' } },
+        { description: { $regex: filterDto.search, $options: 'i' } },
+      ];
+    }
+
     const sortBy = filterDto.sortBy || 'createdAt';
     const sortOrder = filterDto.sortOrder === 'asc' ? 1 : -1;
+    const sort: Record<string, 1 | -1> = { [sortBy]: sortOrder as 1 | -1 };
+    const page = Math.max(1, filterDto.page || 1);
+    const limit = Math.min(50, Math.max(1, filterDto.limit || 10));
+    const skip = (page - 1) * limit;
 
-    return this.todoModel
-      .find(filter)
-      .sort({ [sortBy]: sortOrder })
-      .exec();
+    const [todos, total] = await Promise.all([
+      this.todoModel.find(filter).sort(sort).skip(skip).limit(limit).exec(),
+      this.todoModel.countDocuments(filter).exec(),
+    ]);
+
+    return {
+      todos,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -68,12 +96,40 @@ export class TodoService {
   async update(
     id: string,
     updateTodoDto: UpdateTodoDto,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     userId: string
   ): Promise<any> {
-    // const todo = await this.findOne(id, userId);
-    // Object.assign(todo, updateTodoDto);
-    // return todo.save();
-    await this.todoModel.findByIdAndUpdate(id, updateTodoDto).exec();
+    await this.findOne(id, userId);
+    await this.todoModel.findByIdAndUpdate(id).exec();
+  }
+
+  async fetchStatistics(userId: string): Promise<{
+    total: number;
+    pending: number;
+    inProgress: number;
+    completed: number;
+    overdue: number;
+  }> {
+    const now = new Date();
+    const [total, pending, inProgress, completed, overdue] = await Promise.all([
+      this.todoModel.countDocuments({ userId }).exec(),
+      this.todoModel.countDocuments({ userId, status: 'pending' }).exec(),
+      this.todoModel.countDocuments({ userId, status: 'in_progress' }).exec(),
+      this.todoModel.countDocuments({ userId, status: 'completed' }).exec(),
+      this.todoModel
+        .countDocuments({
+          userId,
+          status: { $ne: 'completed' },
+          dueDate: { $lt: now },
+        })
+        .exec(),
+    ]);
+
+    return {
+      total,
+      pending,
+      inProgress,
+      completed,
+      overdue,
+    };
   }
 }
