@@ -24,6 +24,6 @@
     "strictFunctionTypes": false,
     "noImplicitThis": false
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts", "**/*.test.ts"]
+  "include": ["src/**/*","test/**/*.ts","test/app.e2e-spec.ts"],
+  "exclude": ["node_modules", "dist"]
 }

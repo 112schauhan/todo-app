@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Todo, TodoSchema } from 'src/schemas/todo.schema';
+import { Todo, TodoSchema } from '../schemas/todo.schema';
 import { TodoController } from './todo.controller';
 import { TodoService } from './todo.service';
-import { AuthModule } from 'src/auth/auth.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [

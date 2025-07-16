@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Todo, TodoDocument } from 'src/schemas/todo.schema';
+import { Todo, TodoDocument } from '../schemas/todo.schema';
 import { CreateTodoDto, FilterTodoDto, UpdateTodoDto } from './dto/todo.dto';
 
 @Injectable()

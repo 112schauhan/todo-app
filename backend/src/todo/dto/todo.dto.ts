@@ -7,7 +7,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { TodoStatus } from 'src/schemas/todo.schema';
+import { TodoStatus } from '../../schemas/todo.schema';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
