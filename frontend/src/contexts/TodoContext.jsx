@@ -1,16 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { todoService } from '../services/todoService';
 import toast from 'react-hot-toast';
 
 const TodoContext = createContext();
-
-export const useTodos = () => {
-  const context = useContext(TodoContext);
-  if (!context) {
-    throw new Error('useTodos must be used within a TodoProvider');
-  }
-  return context;
-};
 
 const TodoProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);

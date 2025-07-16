@@ -1,15 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from "react"
+import React, { createContext, useState, useEffect } from "react"
 import { authService } from "../services/authService"
 
 const AuthContext = createContext()
-
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider")
-  }
-  return context
-}
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
@@ -17,10 +9,8 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check if user is already logged in
     const token = localStorage.getItem("accessToken")
     if (token) {
-      // Verify token is valid by calling profile endpoint
       authService
         .getProfile()
         .then((profile) => {
@@ -28,7 +18,6 @@ const AuthProvider = ({ children }) => {
           setIsAuthenticated(true)
         })
         .catch(() => {
-          // Token is invalid, remove it
           localStorage.removeItem("accessToken")
           localStorage.removeItem("refreshToken")
         })
@@ -57,15 +46,15 @@ const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     const response = await authService.signup(userData)
 
-      // Store tokens
-      localStorage.setItem("accessToken", response.accessToken)
-      localStorage.setItem("refreshToken", response.refreshToken)
+    // Store tokens
+    localStorage.setItem("accessToken", response.accessToken)
+    localStorage.setItem("refreshToken", response.refreshToken)
 
-      // Set user state
-      setUser(response.user)
-      setIsAuthenticated(true)
+    // Set user state
+    setUser(response.user)
+    setIsAuthenticated(true)
 
-      return response
+    return response
   }
 
   const logout = async () => {
