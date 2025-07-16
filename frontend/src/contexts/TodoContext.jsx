@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { todoService } from '../services/todoService';
-import toast from 'react-hot-toast';
 import { TodoContext } from './todo';
+import toast from 'react-hot-toast';
 
 const TodoProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);
@@ -23,9 +23,10 @@ const TodoProvider = ({ children }) => {
 
   const fetchTodos = async (currentFilters = filters) => {
     try {
+      console.log('Fetching todos with filters:', currentFilters);
       setLoading(true);
       const response = await todoService.getTodos(currentFilters);
-      setTodos(response.todos || []);
+      setTodos(response.todos || response || []);
       return response;
     } catch (error) {
       toast.error('Failed to fetch todos');
@@ -38,6 +39,7 @@ const TodoProvider = ({ children }) => {
 
   const fetchStatistics = async () => {
     try {
+      console.log('Fetching statistics...');
       const stats = await todoService.getStatistics();
       setStatistics(stats);
     } catch (error) {
@@ -48,9 +50,9 @@ const TodoProvider = ({ children }) => {
   const createTodo = async (todoData) => {
     try {
       const newTodo = await todoService.createTodo(todoData);
-      setTodos(prev => [newTodo, ...prev]);
+      await fetchTodos();
+      fetchStatistics();
       toast.success('Todo created successfully');
-      fetchStatistics(); // Refresh stats
       return newTodo;
     } catch (error) {
       toast.error('Failed to create todo');
@@ -61,11 +63,9 @@ const TodoProvider = ({ children }) => {
   const updateTodo = async (id, todoData) => {
     try {
       const updatedTodo = await todoService.updateTodo(id, todoData);
-      setTodos(prev => prev.map(todo => 
-        todo._id === id ? updatedTodo : todo
-      ));
+      await fetchTodos();
+      fetchStatistics();
       toast.success('Todo updated successfully');
-      fetchStatistics(); // Refresh stats
       return updatedTodo;
     } catch (error) {
       toast.error('Failed to update todo');
@@ -76,9 +76,9 @@ const TodoProvider = ({ children }) => {
   const deleteTodo = async (id) => {
     try {
       await todoService.deleteTodo(id);
-      setTodos(prev => prev.filter(todo => todo._id !== id));
+      await fetchTodos();
+      fetchStatistics();
       toast.success('Todo deleted successfully');
-      fetchStatistics(); // Refresh stats
     } catch (error) {
       toast.error('Failed to delete todo');
       throw error;
@@ -88,13 +88,7 @@ const TodoProvider = ({ children }) => {
   const updateFilters = (newFilters) => {
     const updatedFilters = { ...filters, ...newFilters };
     setFilters(updatedFilters);
-    fetchTodos(updatedFilters);
   };
-
-  // useEffect(() => {
-  //   fetchTodos();
-  //   fetchStatistics();
-  // }, []);
 
   const value = {
     todos,

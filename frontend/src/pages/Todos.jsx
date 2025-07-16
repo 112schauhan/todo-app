@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   Typography,
@@ -12,56 +12,53 @@ import {
   Paper,
   CircularProgress,
   Alert,
-} from "@mui/material"
-import { Add, FilterList } from "@mui/icons-material"
-import { TodoContext } from "../contexts/todo"
-import TodoItem from "../components/TodoItem"
-import TodoForm from "../components/TodoForm"
+} from '@mui/material';
+import { Add, FilterList } from '@mui/icons-material';
+import { TodoContext } from '../contexts/todo';
+import TodoItem from '../components/TodoItem';
+import TodoForm from '../components/TodoForm';
 
 const Todos = () => {
-  const { fetchTodos, filters, updateFilters, todos, loading } =
-    useContext(TodoContext)
-  // eslint-disable-next-line no-unused-vars
-  const [showAddForm, setShowAddForm] = useState(false)
-  const [editingTodo, setEditingTodo] = useState(null)
+  const { fetchTodos, filters, updateFilters, todos, loading } = useContext(TodoContext);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [editingTodo, setEditingTodo] = useState(null);
 
   useEffect(() => {
-    fetchTodos()
-  }, [])
+    fetchTodos();
+  }, []);
 
   useEffect(() => {
-    fetchTodos(filters)
-  }, [filters.status, filters.sortBy, filters.sortOrder, filters.dueDate])
+    fetchTodos(filters);
+  }, [filters.status, filters.sortBy, filters.sortOrder, filters.search]);
 
   const handleFilterChange = (filterType, value) => {
-    updateFilters({ [filterType]: value })
-  }
+    updateFilters({ [filterType]: value });
+  };
 
   const handleAddTodo = () => {
-    setShowAddForm(true)
-  }
+    setShowAddForm(true);
+  };
 
   const handleEditTodo = (todo) => {
-    setEditingTodo(todo)
-  }
+    setEditingTodo(todo);
+  };
 
   const handleCloseForm = () => {
-    setShowAddForm(false)
-    setEditingTodo(null)
-  }
+    setShowAddForm(false);
+    setEditingTodo(null);
+  };
 
   return (
     <Box>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={3}
-      >
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h4" component="h1">
           My Tasks
         </Typography>
-        <Button variant="contained" startIcon={<Add />} onClick={handleAddTodo}>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={handleAddTodo}
+        >
           Add Task
         </Button>
       </Box>
@@ -78,7 +75,7 @@ const Todos = () => {
               <Select
                 value={filters.status}
                 label="Status"
-                onChange={(e) => handleFilterChange("status", e.target.value)}
+                onChange={(e) => handleFilterChange('status', e.target.value)}
               >
                 <MenuItem value="">All</MenuItem>
                 <MenuItem value="pending">Pending</MenuItem>
@@ -93,7 +90,7 @@ const Todos = () => {
               <Select
                 value={filters.sortBy}
                 label="Sort By"
-                onChange={(e) => handleFilterChange("sortBy", e.target.value)}
+                onChange={(e) => handleFilterChange('sortBy', e.target.value)}
               >
                 <MenuItem value="createdAt">Created Date</MenuItem>
                 <MenuItem value="dueDate">Due Date</MenuItem>
@@ -107,9 +104,7 @@ const Todos = () => {
               <Select
                 value={filters.sortOrder}
                 label="Order"
-                onChange={(e) =>
-                  handleFilterChange("sortOrder", e.target.value)
-                }
+                onChange={(e) => handleFilterChange('sortOrder', e.target.value)}
               >
                 <MenuItem value="asc">Ascending</MenuItem>
                 <MenuItem value="desc">Descending</MenuItem>
@@ -122,7 +117,7 @@ const Todos = () => {
               type="date"
               label="Due Date"
               value={filters.dueDate}
-              onChange={(e) => handleFilterChange("dueDate", e.target.value)}
+              onChange={(e) => handleFilterChange('dueDate', e.target.value)}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -143,25 +138,26 @@ const Todos = () => {
         ) : (
           <Box>
             <Typography variant="h6" mb={2}>
-              {todos.length} task{todos.length !== 1 ? "s" : ""} found
+              {todos.length} task{todos.length !== 1 ? 's' : ''} found
             </Typography>
-            {todos.map((todo, index) => (
-              <TodoItem
-                key={todo._id || index}
-                todo={todo}
+            {todos.map((todo) => (
+              <TodoItem 
+                key={todo._id} 
+                todo={todo} 
                 onEdit={handleEditTodo}
               />
             ))}
           </Box>
         )}
       </Box>
+
       <TodoForm
         open={showAddForm || Boolean(editingTodo)}
         onClose={handleCloseForm}
         todo={editingTodo}
       />
     </Box>
-  )
-}
+  );
+};
 
-export default Todos
+export default Todos;

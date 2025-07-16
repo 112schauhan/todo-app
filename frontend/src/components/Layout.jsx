@@ -17,8 +17,9 @@ import {
 import {
   Logout,
   Home,
-  CheckBox,
   Menu as MenuIcon,
+  TaskAlt,
+  Task,
 } from '@mui/icons-material';
 
 const Layout = ({ children }) => {
@@ -26,7 +27,7 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleLogout = async () => {
@@ -50,16 +51,15 @@ const Layout = ({ children }) => {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
-    { name: 'Todos', href: '/todos', icon: CheckBox },
+    { name: 'Todos', href: '/todos', icon: Task },
   ];
 
   return (
     <Box sx={{ flexGrow: 1, minHeight: '100vh', bgcolor: 'background.default' }}>
       <AppBar position="static" color="default" elevation={1}>
         <Toolbar>
-          {/* Logo */}
           <Box sx={{ display: 'flex', alignItems: 'center', mr: 4 }}>
-            <CheckBox sx={{ color: 'primary.main', mr: 1 }} />
+            <TaskAlt sx={{ color: 'primary.main', mr: 1 }} />
             <Typography
               variant="h6"
               component="div"
@@ -69,7 +69,6 @@ const Layout = ({ children }) => {
             </Typography>
           </Box>
 
-          {/* Desktop Navigation */}
           {!isMobile && (
             <Box sx={{ display: 'flex', gap: 2, flexGrow: 1 }}>
               {navigation.map((item) => {
@@ -93,10 +92,8 @@ const Layout = ({ children }) => {
             </Box>
           )}
 
-          {/* Spacer */}
           <Box sx={{ flexGrow: 1 }} />
 
-          {/* User Menu */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             {!isMobile && (
               <Typography variant="body2" color="text.secondary">
@@ -152,8 +149,7 @@ const Layout = ({ children }) => {
         </Toolbar>
       </AppBar>
 
-      {/* Main Content */}
-      <Container maxWidth="xl" sx={{ py: 3 }}>
+      <Container maxWidth="1400px" sx={{ py: 3 }}>
         {children}
       </Container>
     </Box>
