@@ -20,7 +20,7 @@ import {
 } from '@mui/icons-material';
 import { TodoContext } from '../contexts/todo';
 
-const TodoItem = ({ todo }) => {
+const TodoItem = ({ todo, onEdit }) => {
   const { updateTodo, deleteTodo } = useContext(TodoContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,6 +31,13 @@ const TodoItem = ({ todo }) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleEdit = () => {
+    handleMenuClose();
+    if (onEdit) {
+      onEdit(todo);
+    }
   };
 
   const handleStatusChange = async (event) => {
@@ -89,7 +96,6 @@ const TodoItem = ({ todo }) => {
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="flex-start">
           <Box flex={1}>
-            {/* Title and Status */}
             <Box display="flex" alignItems="center" gap={2} mb={1}>
               <FormControlLabel
                 control={
@@ -119,14 +125,12 @@ const TodoItem = ({ todo }) => {
               />
             </Box>
 
-            {/* Description */}
             {todo.description && (
               <Typography variant="body2" color="text.secondary" mb={2}>
                 {todo.description}
               </Typography>
             )}
 
-            {/* Dates */}
             <Box display="flex" gap={3}>
               <Box display="flex" alignItems="center" gap={1}>
                 <CalendarToday sx={{ fontSize: 16, color: 'text.secondary' }} />
@@ -157,7 +161,7 @@ const TodoItem = ({ todo }) => {
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={handleMenuClose}>
+              <MenuItem onClick={handleEdit}>
                 <Edit sx={{ mr: 1, fontSize: 20 }} />
                 Edit
               </MenuItem>
