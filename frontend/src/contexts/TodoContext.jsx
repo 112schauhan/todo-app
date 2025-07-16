@@ -1,8 +1,7 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { todoService } from '../services/todoService';
 import toast from 'react-hot-toast';
-
-const TodoContext = createContext();
+import { TodoContext } from './todo';
 
 const TodoProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);
