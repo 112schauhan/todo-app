@@ -100,7 +100,11 @@ export class TodoService {
     userId: string
   ): Promise<any> {
     await this.findOne(id, userId);
-    await this.todoModel.findByIdAndUpdate(id).exec();
+    const updated = await this.todoModel
+      .findByIdAndUpdate(id, updateTodoDto, { new: true })
+      .exec();
+    if (!updated) throw new NotFoundException('Todo not found');
+    return updated;
   }
 
   async fetchStatistics(userId: string): Promise<{

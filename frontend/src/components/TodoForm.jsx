@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react"
+import React, { useState, useContext, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -12,64 +12,66 @@ import {
   MenuItem,
   Box,
   CircularProgress,
-} from "@mui/material"
-import { TodoContext } from "../contexts/todo"
-import toast from "react-hot-toast"
+} from '@mui/material';
+import { TodoContext } from '../contexts/todo';
+import toast from 'react-hot-toast';
 
 const TodoForm = ({ open, onClose, todo = null }) => {
-  const { createTodo, updateTodo } = useContext(TodoContext)
-  const [loading, setLoading] = useState(false)
+  const { createTodo, updateTodo } = useContext(TodoContext);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    dueDate: "",
-    status: "pending",
-  })
+    title: '',
+    description: '',
+    dueDate: '',
+    status: 'pending',
+  });
 
-  const isEditing = Boolean(todo)
+  const isEditing = Boolean(todo);
 
   useEffect(() => {
-    if (isEditing && todo) {
-      setFormData({
-        title: todo.title || "",
-        description: todo.description || "",
-        dueDate: todo.dueDate
-          ? new Date(todo.dueDate).toISOString().split("T")[0]
-          : "",
-        status: todo.status || "pending",
-      })
-    } else {
-      setFormData({
-        title: "",
-        description: "",
-        dueDate: "",
-        status: "pending",
-      })
+    if (open) {
+      if (isEditing && todo) {
+        console.log('Populating form with todo data:', todo);
+        setFormData({
+          title: todo.title || '',
+          description: todo.description || '',
+          dueDate: todo.dueDate ? new Date(todo.dueDate).toISOString().split('T')[0] : '',
+          status: todo.status || 'pending',
+        });
+      } else {
+        console.log('Resetting form for new todo');
+        setFormData({
+          title: '',
+          description: '',
+          dueDate: '',
+          status: 'pending',
+        });
+      }
     }
-  }, [isEditing, todo, open])
+  }, [isEditing, todo, open]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
+    const { name, value } = e.target;
+    setFormData(prev => ({
       ...prev,
-      [name]: value,
-    }))
-  }
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-
+    e.preventDefault();
+    
     if (!formData.title.trim()) {
-      toast.error("Title is required")
-      return
+      toast.error('Title is required');
+      return;
     }
 
     if (!formData.dueDate) {
-      toast.error("Due date is required")
-      return
+      toast.error('Due date is required');
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       const todoData = {
@@ -77,46 +79,46 @@ const TodoForm = ({ open, onClose, todo = null }) => {
         description: formData.description.trim(),
         dueDate: new Date(formData.dueDate).toISOString(),
         status: formData.status,
-      }
+      };
 
       if (isEditing) {
-        await updateTodo(todo._id, todoData)
-        toast.success("Todo updated successfully")
+        await updateTodo(todo._id, todoData);
       } else {
-        await createTodo(todoData)
-        toast.success("Todo created successfully")
+        await createTodo(todoData);
       }
 
-      onClose()
+      onClose();
     } catch (error) {
-      console.error("Error saving todo:", error)
-      toast.error(isEditing ? "Failed to update todo" : "Failed to create todo")
+      console.error('Error saving todo:', error);
+      toast.error(isEditing ? 'Failed to update todo' : 'Failed to create todo');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleClose = () => {
     if (!loading) {
-      onClose()
+      onClose();
     }
-  }
+  };
 
   return (
-    <Dialog
-      open={open}
+    <Dialog 
+      open={open} 
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
       PaperProps={{
-        component: "form",
+        component: 'form',
         onSubmit: handleSubmit,
       }}
     >
-      <DialogTitle>{isEditing ? "Edit Todo" : "Create New Todo"}</DialogTitle>
-
+      <DialogTitle>
+        {isEditing ? 'Edit Todo' : 'Create New Todo'}
+      </DialogTitle>
+      
       <DialogContent>
-        <Box sx={{ pt: 1, display: "flex", flexDirection: "column", gap: 3 }}>
+        <Box sx={{ pt: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
           <TextField
             name="title"
             label="Title"
@@ -162,6 +164,7 @@ const TodoForm = ({ open, onClose, todo = null }) => {
               onChange={handleChange}
             >
               <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="in_progress">In Progress</MenuItem>
               <MenuItem value="completed">Completed</MenuItem>
             </Select>
           </FormControl>
@@ -169,26 +172,27 @@ const TodoForm = ({ open, onClose, todo = null }) => {
       </DialogContent>
 
       <DialogActions sx={{ p: 3, pt: 2 }}>
-        <Button onClick={handleClose} disabled={loading} color="inherit">
+        <Button 
+          onClick={handleClose} 
+          disabled={loading}
+          color="inherit"
+        >
           Cancel
         </Button>
-        <Button
-          type="submit"
+        <Button 
+          type="submit" 
           variant="contained"
           disabled={loading}
           startIcon={loading ? <CircularProgress size={16} /> : null}
         >
-          {loading
-            ? isEditing
-              ? "Updating..."
-              : "Creating..."
-            : isEditing
-            ? "Update"
-            : "Create"}
+          {loading 
+            ? (isEditing ? 'Updating...' : 'Creating...') 
+            : (isEditing ? 'Update' : 'Create')
+          }
         </Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
-export default TodoForm
+export default TodoForm;

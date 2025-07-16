@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { todoService } from '../services/todoService';
 import { TodoContext } from './todo';
 import toast from 'react-hot-toast';
@@ -47,9 +47,30 @@ const TodoProvider = ({ children }) => {
     }
   };
 
+  const getActualStatus = (todo) => {
+    if (todo.status === 'completed') {
+      return 'completed';
+    }
+    
+    const now = new Date();
+    const dueDate = new Date(todo.dueDate);
+    const isOverdue = dueDate < now;
+    
+    if (isOverdue) {
+      return 'overdue';
+    }
+    
+    return todo.status;
+  };
+
   const createTodo = async (todoData) => {
     try {
-      const newTodo = await todoService.createTodo(todoData);
+      const todoWithDefaults = {
+        ...todoData,
+        status: todoData.status || 'pending',
+      };
+      
+      const newTodo = await todoService.createTodo(todoWithDefaults);
       await fetchTodos();
       fetchStatistics();
       toast.success('Todo created successfully');
@@ -90,6 +111,16 @@ const TodoProvider = ({ children }) => {
     setFilters(updatedFilters);
   };
 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (filters.search !== undefined) {
+        fetchTodos(filters);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [filters.search]);
+
   const value = {
     todos,
     statistics,
@@ -101,6 +132,7 @@ const TodoProvider = ({ children }) => {
     updateTodo,
     deleteTodo,
     updateFilters,
+    getActualStatus,
   };
 
   return (
