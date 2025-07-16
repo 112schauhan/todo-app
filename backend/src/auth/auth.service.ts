@@ -45,10 +45,9 @@ export class AuthService {
 
   private async updateRefreshToken(userId: string, refreshToken: string) {
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-    await this.userModel.findByIdAndUpdate(
-      { userId },
-      { refreshToken: hashedRefreshToken }
-    );
+    await this.userModel.findByIdAndUpdate(userId, {
+      refreshToken: hashedRefreshToken,
+    });
   }
 
   async signUp(email: string, password: string, name: string): Promise<any> {
@@ -64,13 +63,26 @@ export class AuthService {
       name,
     });
 
-    await user.save();
+    const savedUser = await user.save();
+    const tokens = await this.getTokens(
+      savedUser._id.toString(),
+      savedUser.email
+    );
 
-    const tokens = await this.getTokens(user._id.toString(), user.email);
+    await this.updateRefreshToken(
+      savedUser._id.toString(),
+      tokens.refreshToken
+    );
 
-    await this.updateRefreshToken(user._id.toString(), tokens.refreshToken);
-
-    return tokens;
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user: {
+        id: savedUser._id,
+        email: savedUser.email,
+        name: savedUser.name,
+      },
+    };
   }
 
   async signIn(email: string, password: string): Promise<any> {

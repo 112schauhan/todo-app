@@ -18,12 +18,12 @@ export class Todo {
   description: string;
 
   @Prop({ required: true })
-  dueDate: Date;
+  dueDate: string;
 
   @Prop({ enum: TodoStatus, default: TodoStatus.PENDING })
   status: TodoStatus;
 
-  @Prop({ ype: Types.ObjectId, ref: 'User', required: true })
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   userId: Types.ObjectId;
 }
 

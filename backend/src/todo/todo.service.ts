@@ -13,6 +13,7 @@ export class TodoService {
   constructor(@InjectModel(Todo.name) private todoModel: Model<TodoDocument>) {}
 
   async create(createTodoDto: CreateTodoDto, userId: string): Promise<Todo> {
+    console.log('Control came here ', createTodoDto);
     const createdTodo = new this.todoModel({
       ...createTodoDto,
       userId,

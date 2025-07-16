@@ -10,6 +10,7 @@ import { TodoModule } from './todo/todo.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
     DatabaseModule,
     AuthModule,

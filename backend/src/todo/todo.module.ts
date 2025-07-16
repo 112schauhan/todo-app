@@ -3,12 +3,18 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Todo, TodoSchema } from 'src/schemas/todo.schema';
 import { TodoController } from './todo.controller';
 import { TodoService } from './todo.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Todo.name, schema: TodoSchema }]),
+    AuthModule,
   ],
   controllers: [TodoController],
   providers: [TodoService],
 })
-export class TodoModule {}
+export class TodoModule {
+  constructor() {
+    console.log('🚀 TodoModule initialized');
+  }
+}
