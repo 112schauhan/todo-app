@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { todoService } from '../services/todoService';
 import toast from 'react-hot-toast';
 import { TodoContext } from './todo';
 
 const TodoProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);
-  const [statistics, setStatistics] = useState(null);
+  const [statistics, setStatistics] = useState({
+    total: 0,
+    completed: 0,
+    pending: 0,
+    overdue: 0,
+  });
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     status: '',
@@ -86,10 +91,10 @@ const TodoProvider = ({ children }) => {
     fetchTodos(updatedFilters);
   };
 
-  useEffect(() => {
-    fetchTodos();
-    fetchStatistics();
-  }, []);
+  // useEffect(() => {
+  //   fetchTodos();
+  //   fetchStatistics();
+  // }, []);
 
   const value = {
     todos,

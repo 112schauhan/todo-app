@@ -66,6 +66,9 @@ class ApiClient {
   }
 
   async performTokenRefresh() {
+     if (!this.client) {
+      throw new Error('API client not initialized');
+    }
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
       throw new Error('No refresh token available');

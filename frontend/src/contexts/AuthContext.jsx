@@ -29,7 +29,7 @@ const AuthProvider = ({ children }) => {
   }, [])
 
   const login = async (credentials) => {
-    const response = await authService.signup(credentials)
+    const response = await authService.signin(credentials)
 
     // Store tokens
     localStorage.setItem("accessToken", response.accessToken)
