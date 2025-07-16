@@ -142,7 +142,7 @@ const Layout = ({ children }) => {
             ) : (
               <Button
                 color="inherit"
-                startIcon={<LogOut />}
+                startIcon={<Logout />}
                 onClick={handleLogout}
               >
                 Logout
